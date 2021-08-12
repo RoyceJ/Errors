@@ -1,0 +1,57 @@
+Error: concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/zfs.py", line 139, in do_delete
+    zfs.destroy(name, force=options['force'])
+  File "libzfs.pyx", line 391, in libzfs.ZFS.__exit__
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/zfs.py", line 139, in do_delete
+    zfs.destroy(name, force=options['force'])
+  File "libzfs.pyx", line 1330, in libzfs.ZFS.destroy
+libzfs.ZFSException: unmount failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/concurrent/futures/process.py", line 243, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/worker.py", line 94, in main_worker
+    res = MIDDLEWARE._run(*call_args)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/worker.py", line 45, in _run
+    return self._call(name, serviceobj, methodobj, args, job=job)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/worker.py", line 39, in _call
+    return methodobj(*params)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/worker.py", line 39, in _call
+    return methodobj(*params)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/schema.py", line 977, in nf
+    return f(*args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/zfs.py", line 144, in do_delete
+    raise CallError(str(e), errno_)
+middlewared.service_exception.CallError: [EBUSY] unmount failed
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/middlewared/job.py", line 367, in run
+    await self.future
+  File "/usr/local/lib/python3.9/site-packages/middlewared/job.py", line 403, in __run_body
+    rv = await self.method(*([self] + args))
+  File "/usr/local/lib/python3.9/site-packages/middlewared/schema.py", line 973, in nf
+    return await f(*args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/pool.py", line 1579, in export
+    await self.middleware.call('zfs.pool.delete', pool['name'])
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1241, in call
+    return await self._call(
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1198, in _call
+    return await methodobj(*prepared_call.args)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/service.py", line 506, in delete
+    rv = await self.middleware._call(
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1206, in _call
+    return await self._call_worker(name, *prepared_call.args)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1212, in _call_worker
+    return await self.run_in_proc(main_worker, name, args, job)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1139, in run_in_proc
+    return await self.run_in_executor(self.__procpool, method, *args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1113, in run_in_executor
+    return await loop.run_in_executor(pool, functools.partial(method, *args, **kwargs))
+middlewared.service_exception.CallError: [EBUSY] unmount failed
