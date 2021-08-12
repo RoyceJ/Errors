@@ -1,3 +1,4 @@
+*****DELETING POOL ERROR:
 Error: concurrent.futures.process._RemoteTraceback: 
 """
 Traceback (most recent call last):
@@ -55,3 +56,33 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.9/site-packages/middlewared/main.py", line 1113, in run_in_executor
     return await loop.run_in_executor(pool, functools.partial(method, *args, **kwargs))
 middlewared.service_exception.CallError: [EBUSY] unmount failed
+
+
+****EXPANDING POOL ERROR
+Error: Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/middlewared/job.py", line 367, in run
+    await self.future
+  File "/usr/local/lib/python3.9/site-packages/middlewared/job.py", line 403, in __run_body
+    rv = await self.method(*([self] + args))
+  File "/usr/local/lib/python3.9/site-packages/middlewared/schema.py", line 973, in nf
+    return await f(*args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/pool_/expand.py", line 97, in expand
+    await self._resize_disk(part_data, pool['encrypt'], geli_resize)
+  File "/usr/local/lib/python3.9/site-packages/middlewared/plugins/pool_/expand.py", line 130, in _resize_disk
+    await run('camcontrol', 'reprobe', part_data['disk'])
+  File "/usr/local/lib/python3.9/site-packages/middlewared/utils/__init__.py", line 62, in run
+    cp.check_returncode()
+  File "/usr/local/lib/python3.9/subprocess.py", line 460, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+subprocess.CalledProcessError: Command '('camcontrol', 'reprobe', 'mfid1')' returned non-zero exit status 1.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/middlewared/job.py", line 371, in run
+    raise handled
+middlewared.service_exception.CallError: [EFAULT] Command camcontrol reprobe mfid1 failed (code 1):
+camcontrol: cam_lookup_pass: CAMGETPASSTHRU ioctl failed
+cam_lookup_pass: No such file or directory
+cam_lookup_pass: either the pass driver isn't in your kernel
+cam_lookup_pass: or mfid1 doesn't exist
